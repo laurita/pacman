@@ -1,0 +1,54 @@
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  
+  <canvas>
+  </canvas>
+  
+</body>
+
+<script type='application/javascript' src="pacman.js"></script>
+<script type='application/javascript' src="borderTemplate.js"></script>
+<script type='application/javascript' src="border.js"></script>
+<script type='application/javascript' src="ghost.js"></script>
+<script type='application/javascript' src="maze.js"></script>
+<script type='application/javascript' src="game.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script><script>
+
+$(document).ready( function() {
+  
+  var conf = { resolution: { x: 504, y: 558, fx: 28, fy: 31 },
+               borderTemplates: borderTemplates()
+             };
+             
+  var borders = makeBorders(conf.borderTemplates);
+  var ghosts = []; 
+  var pills = [];
+  var food = [];
+  var state = {
+                score: 0,
+                gameState: 0, // 0 - before start, 1 - in game, 2 - game over
+                maze: new maze( borders, new pacman({ x: 3, y: 3 }, 1), ghosts, pills, food )
+              };
+  
+  // access the dom
+  var canvas = $('canvas')[0];
+  canvas.width = conf.resolution.x;
+  canvas.height = conf.resolution.y;
+  var ctx = canvas.getContext('2d');
+  
+  // set up events
+  state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
+  
+  
+            
+  
+  
+});
+
+</script>
+</html>
