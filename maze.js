@@ -1,14 +1,14 @@
 // maze object
 
-function maze(borders, pacman, ghosts, pills, food) {
+function maze(board) {
   if (!(this instanceof maze)) {
       return new maze(borders, pacman, ghosts, pills, food);
   }
-  this.borders = borders;
-  this.pacman = pacman;
-  this.ghosts = ghosts;
-  this. pills = pills;
-  this.food = food;
+  this.borders = board.borders;
+  this.pacman = board.pacman;
+  this.ghosts = board.ghosts;
+  this. pills = board.pills;
+  this.food = board.food;
 }
 
 maze.prototype.draw = function(ctx) {

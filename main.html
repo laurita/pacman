@@ -17,6 +17,8 @@
 <script type='application/javascript' src="ghost.js"></script>
 <script type='application/javascript' src="maze.js"></script>
 <script type='application/javascript' src="game.js"></script>
+<script type='application/javascript' src="pill.js"></script>
+<script type='application/javascript' src="food.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script><script>
 
 $(document).ready( function() {
@@ -25,14 +27,11 @@ $(document).ready( function() {
                borderTemplates: borderTemplates()
              };
              
-  var borders = makeBorders(conf.borderTemplates);
-  var ghosts = []; 
-  var pills = [];
-  var food = [];
+  var board = makeBoard(conf.borderTemplates);
   var state = {
                 score: 0,
                 gameState: 0, // 0 - before start, 1 - in game, 2 - game over
-                maze: new maze( borders, new pacman({ x: 3, y: 3 }, 1), ghosts, pills, food )
+                maze: new maze( board )
               };
   
   // access the dom
@@ -43,11 +42,7 @@ $(document).ready( function() {
   
   // set up events
   state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
-  
-  
-            
-  
-  
+   
 });
 
 </script>
