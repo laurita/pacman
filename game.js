@@ -20,6 +20,16 @@ function draw(conf, state, ctx) {
   drawPills(state.maze.pills, conf, ctx);
   // draw food
   drawFoods(state.maze.food, conf, ctx);
+  // draw pacman
+  drawPacman(conf.resolution.x / conf.resolution.fx, conf.resolution.y / conf.resolution.fy, ctx, state.maze.pacman);
+}
+
+function drawPacman(bwidth, bheight, ctx, pacman) {
+  ctx.save();
+  ctx.translate(bwidth * pacman.loc.x, bheight * pacman.loc.y);
+  ctx.scale(bwidth / 3, bheight / 3);
+  pacman.draw(ctx);
+  ctx.restore();
 }
 
 function drawBorder(bwidth, bheight, ctx, border) {

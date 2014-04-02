@@ -9,5 +9,13 @@ function pacman(loc, dir) {
 }
 
 pacman.prototype.draw = function(ctx) {
-  
+  ctx.save();
+  ctx.fillStyle = 'yellow';
+  ctx.beginPath();
+  ctx.lineTo(1, 1);
+  ctx.arc(1, 1, 1, 7 * Math.PI / 6, 17 * Math.PI / 6, false);
+  ctx.closePath();
+  ctx.fill();
+  // set composite property
+  ctx.restore();
 };
