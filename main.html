@@ -26,7 +26,8 @@ $(document).ready( function() {
   var conf = { resolution: { x: 504, y: 558, fx: 28, fy: 31 },
                borderTemplates: borderTemplates()
              };
-             
+            
+  var boardA = boardArray(); 
   var board = makeBoard(conf.borderTemplates);
   var state = {
                 score: 0,
@@ -42,7 +43,51 @@ $(document).ready( function() {
   
   // set up events
   state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
-   
+  
+  $(document).keydown( function(ev) {
+    console.log(ev.keyCode);
+    console.log("pacman location: " + JSON.stringify(state.maze.pacman.loc));
+    // check what's in next cell
+    var next_cell = getNextCellValue(state.maze.pacman, boardA, ev.keyCode);
+    console.log("next_cel: " + next_cell);
+  }); 
+  
+  function getNextCellValue(pacman, board, keycode) {
+    var pac_new_loc = pacman.loc;
+    switch(keycode)
+    {
+      // left
+      case 37: {
+        console.log("left");
+        pac_new_loc = { x: pacman.loc.x - 1, y: pacman.loc.y };
+        break;
+      } 
+      // up
+      case 38: {
+        console.log("up");
+        pac_new_loc = { x: pacman.loc.x, y: pacman.loc.y - 1 };
+        break;
+      }
+      // right
+      case 39: {
+        console.log("right");
+        pac_new_loc = { x: pacman.loc.x + 1, y: pacman.loc.y };
+        break;
+      }
+      // down
+      case 40: {
+        console.log("down");
+        pac_new_loc = { x: pacman.loc.x, y: pacman.loc.y + 1 };
+        break;
+      }
+      default: {
+        console.log("other");
+        break;
+      }
+    }
+    console.log("pacman new location: " + JSON.stringify(pac_new_loc));
+    return board[pac_new_loc.y][pac_new_loc.x];
+  }
 });
 
 </script>

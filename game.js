@@ -81,7 +81,7 @@ function drawFoods(foods, conf, ctx) {
   ctx.restore();
 }
 
-function borderArray() {
+function boardArray() {
   return [
           [3,2,2,2,2,2,2,2,2,2,2,2,2,4,3,2,2,2,2,2,2,2,2,2,2,2,2,4],
           [1,7,7,7,7,7,7,7,7,7,7,7,7,1,1,7,7,7,7,7,7,7,7,7,7,7,7,1],
@@ -118,7 +118,7 @@ function borderArray() {
 }
 
 function makeBoard(templates) {
-  var ba = borderArray();
+  var ba = boardArray();
   var borders = [];
   var pills = [];
   var foods = [];
@@ -127,7 +127,7 @@ function makeBoard(templates) {
   for (i in ba) {
     for (j in ba[i]) {
       var elem = ba[i][j];
-      var loc = {x: j, y: i };
+      var loc = {x: parseInt(j), y: parseInt(i) };
       // borders
       if (elem >= 1 && elem <= 6) {
         var temp = (elem == 1) ? templates.v :                // vertical border
