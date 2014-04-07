@@ -197,3 +197,82 @@ function getNextCellLocation(pacman, board, keycode) {
   return pac_new_loc;
 }
 
+function performEvent(next_loc, state) {
+  switch(state.board[next_loc.y][next_loc.x])
+  {
+    // empty
+    case 0: {
+      // move pacman to this cell, i.e. change two board array cell values
+      // and update pacman state
+      var pac = state.maze.pacman;
+      state.board[pac.loc.y][pac.loc.x] = 0;
+      state.board[next_loc.y][next_loc.x] = 13;
+      console.log("pacman loc before "+ JSON.stringify(pac.loc));
+      // and update pacman in JSON
+      state.maze.pacman.loc = next_loc;
+      console.log("pacman loc after "+ JSON.stringify(pac.loc));
+      break;
+    }
+    // pill
+    case 7: {
+      // remove pill from JSON, i.e. from state.maze.pills
+      console.log("before removing pill")
+      console.log(state.maze.pills.length)
+      removeElemInJSON(next_loc, state.maze.pills);
+      console.log("after removing pill")
+      console.log(state.maze.pills.length)
+      // increase score
+      state.score++;
+      // move pacman to this cell, i.e. change two board array cell values
+      // and update pacman state
+      var pac = state.maze.pacman;
+      state.board[pac.loc.y][pac.loc.x] = 0;
+      state.board[next_loc.y][next_loc.x] = 13;
+      console.log("pacman loc before "+ JSON.stringify(pac.loc));
+      // and update pacman in JSON
+      state.maze.pacman.loc = next_loc;
+      console.log("pacman loc after "+ JSON.stringify(pac.loc));
+      break;
+    }
+    // food
+    case 8: {
+      // remove pill from JSON, i.e. from state.maze.pills
+      console.log("before removing food")
+      console.log(state.maze.food.length)
+      removeElemInJSON(next_loc, state.maze.food);
+      console.log("after removing food")
+      console.log(state.maze.food.length)
+      // increase score
+      state.score += 10;
+      // move pacman to this cell, i.e. change two board array cell values
+      // and update pacman state
+      var pac = state.maze.pacman;
+      state.board[pac.loc.y][pac.loc.x] = 0;
+      state.board[next_loc.y][next_loc.x] = 13;
+      console.log("pacman loc before "+ JSON.stringify(pac.loc));
+      // and update pacman in JSON
+      state.maze.pacman.loc = next_loc;
+      console.log("pacman loc after "+ JSON.stringify(pac.loc));
+      break;
+    }
+    // border
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6: {
+      console.log("bump");
+      break;
+    }
+  }
+  console.log("score: "+ state.score);
+  return state;
+}
+
+function removeElemInJSON(loc, elems) {
+  var i = elems.findIndex( function(el) { if ( el.loc.x == loc.x && el.loc.y == loc.y) return pill;});
+  elems.splice(i, 1);
+  //return pills;
+}
+
