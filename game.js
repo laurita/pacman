@@ -20,15 +20,37 @@ function draw(conf, state, ctx) {
   drawPills(state.maze.pills, conf, ctx);
   // draw food
   drawFoods(state.maze.food, conf, ctx);
+  // draw ghosts
+  drawGhosts(state.maze.ghosts, conf, ctx);
   // draw pacman
   drawPacman(conf.resolution.x / conf.resolution.fx, conf.resolution.y / conf.resolution.fy, ctx, state.maze.pacman);
 }
 
 function drawPacman(bwidth, bheight, ctx, pacman) {
   ctx.save();
-  ctx.translate(bwidth * pacman.loc.x, bheight * pacman.loc.y);
-  ctx.scale(bwidth / 3, bheight / 3);
+  ctx.translate(bwidth * (pacman.loc.x - 0.33), bheight * pacman.loc.y);
+  ctx.scale(bwidth / 2, bheight / 2);
   pacman.draw(ctx);
+  ctx.restore();
+}
+
+function drawGhosts(ghosts, conf, ctx) {
+  console.log('drawGhosts');
+  console.log(JSON.stringify(ghosts));
+  ctx.save();
+  for (var i = 0; i < ghosts.length; i++) {
+    drawGhost(conf.resolution.x / conf.resolution.fx, conf.resolution.y / conf.resolution.fy, ctx, ghosts[i]);
+  }
+  ctx.restore();
+}
+
+function drawGhost(bwidth, bheight, ctx, ghost) {
+  console.log('drawGhost');
+  console.log(JSON.stringify(ghost));
+  ctx.save();
+  ctx.translate(bwidth * ghost.loc.x + bwidth * 0.33, bheight * ghost.loc.y);
+  ctx.scale(bwidth / 1.5, bheight / 1.5);
+  ghost.draw(ctx);
   ctx.restore();
 }
 
@@ -94,11 +116,11 @@ function boardArray() {
           [1,7,7,7,7,7,7,1,1,7,7,7,7,1,1,7,7,7,7,1,1,7,7,7,7,7,7,1],
           [5,2,2,2,2,4,7,1,5,2,2,4,0,1,1,0,3,2,2,6,1,7,3,2,2,2,2,6],
           [0,0,0,0,0,1,7,1,3,2,2,6,0,5,6,0,5,2,2,4,1,7,1,0,0,0,0,0],
-          [0,0,0,0,0,1,7,1,1,0,0,0,0,0,0,0,0,0,0,1,1,7,1,0,0,0,0,0],
-          [0,0,0,0,0,1,7,1,1,0,3,2,2,2,2,2,2,4,0,1,1,7,1,0,0,0,0,0],
+          [0,0,0,0,0,1,7,1,1,0,0,0,0,9,0,0,0,0,0,1,1,7,1,0,0,0,0,0],
+          [0,0,0,0,0,1,7,1,1,0,3,2,2,0,0,2,2,4,0,1,1,7,1,0,0,0,0,0],
           [0,2,2,2,2,6,7,5,6,0,1,0,0,0,0,0,0,1,0,5,6,7,5,2,2,2,2,0],
           [0,0,0,0,0,0,7,0,0,0,1,0,0,0,0,0,0,1,0,0,0,7,0,0,0,0,0,0],
-          [0,2,2,2,2,4,7,3,4,0,1,0,0,0,0,0,0,1,0,3,4,7,3,2,2,2,2,0],
+          [0,2,2,2,2,4,7,3,4,0,1,10,0,11,0,12,0,1,0,3,4,7,3,2,2,2,2,0],
           [0,0,0,0,0,1,7,1,1,0,5,2,2,2,2,2,2,6,0,1,1,7,1,0,0,0,0,0],
           [0,0,0,0,0,1,7,1,1,0,0,0,0,0,0,0,0,0,0,1,1,7,1,0,0,0,0,0],
           [0,0,0,0,0,1,7,1,1,0,3,2,2,2,2,2,2,4,0,1,1,7,1,0,0,0,0,0],
@@ -106,7 +128,7 @@ function boardArray() {
           [1,7,7,7,7,7,7,7,7,7,7,7,7,1,1,7,7,7,7,7,7,7,7,7,7,7,7,1],
           [1,7,3,2,2,4,7,3,2,2,2,4,7,1,1,7,3,2,2,2,4,7,3,2,2,4,7,1],
           [1,7,5,2,4,1,7,5,2,2,2,6,7,5,6,7,5,2,2,2,6,7,1,3,2,6,7,1],
-          [1,8,7,7,1,1,7,7,7,7,7,7,7,7,13,7,7,7,7,7,7,7,1,1,7,7,8,1],
+          [1,8,7,7,1,1,7,7,7,7,7,7,7,0,13,7,7,7,7,7,7,7,1,1,7,7,8,1],
           [5,2,4,7,1,1,7,3,4,7,3,2,2,2,2,2,2,4,7,3,4,7,1,1,7,3,2,6],
           [3,2,6,7,5,6,7,1,1,7,5,2,2,4,3,2,2,6,7,1,1,7,5,6,7,5,2,4],
           [1,7,7,7,7,7,7,1,1,7,7,7,7,1,1,7,7,7,7,1,1,7,7,7,7,7,7,1],
@@ -147,11 +169,11 @@ function makeBoard(templates) {
         foods.push( new food( loc ) );
       }
       else if (elem >= 9 && elem <= 12) {
-        var color = (elem == 9) ? '#F00' :
-                   ((elem == 10) ? '#0F0' :
-                   ((elem == 11) ? '#00F' :
-                   '#220'));
-        ghosts.push( new ghost( loc, color, 1) );
+        var color = (elem == 9) ? '#d00' :
+                   ((elem == 10) ? '#6ff' :
+                   ((elem == 11) ? '#f99' :
+                   '#f90'));
+        ghosts.push( new ghost( loc, 1, color) );
       } else if (elem == 13) {
         pac = new pacman( loc, 1);
       }
@@ -274,5 +296,13 @@ function removeElemInJSON(loc, elems) {
   var i = elems.findIndex( function(el) { if ( el.loc.x == loc.x && el.loc.y == loc.y) return pill;});
   elems.splice(i, 1);
   //return pills;
+}
+
+function moveGhosts(state) {
+  var ghosts = state.maze.ghosts;
+  for (var i = 0; i < ghosts.length; i++) {
+    ghosts[i].move(state);
+  }
+  
 }
 

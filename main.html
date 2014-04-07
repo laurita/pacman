@@ -44,6 +44,7 @@ $(document).ready( function() {
   
   // set up events
   state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
+  state.ghostStepId = setInterval( function() { moveGhosts(state); } , 1000 / 6 );
   
   $(document).keydown( function(ev) {
     console.log(ev.keyCode);

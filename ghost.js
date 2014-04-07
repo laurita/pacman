@@ -10,5 +10,12 @@ function ghost(loc, dir, color) {
 }
 
 ghost.prototype.draw = function(ctx) {
-  
+  console.log('ghost.draw');
+  console.log(JSON.stringify(this));
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
+  ctx.fillStyle = this.color;
+  ctx.fill();
+  ctx.restore();
 };
