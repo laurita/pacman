@@ -160,3 +160,40 @@ function makeBoard(templates) {
   return { borders: borders, pills: pills, food: foods, ghosts: ghosts, pacman: pac};
 }
 
+function getNextCellLocation(pacman, board, keycode) {
+  var pac_new_loc = pacman.loc;
+  switch(keycode)
+  {
+    // left
+    case 37: {
+      console.log("left");
+      pac_new_loc = { x: pacman.loc.x - 1, y: pacman.loc.y };
+      break;
+    } 
+    // up
+    case 38: {
+      console.log("up");
+      pac_new_loc = { x: pacman.loc.x, y: pacman.loc.y - 1 };
+      break;
+    }
+    // right
+    case 39: {
+      console.log("right");
+      pac_new_loc = { x: pacman.loc.x + 1, y: pacman.loc.y };
+      break;
+    }
+    // down
+    case 40: {
+      console.log("down");
+      pac_new_loc = { x: pacman.loc.x, y: pacman.loc.y + 1 };
+      break;
+    }
+    default: {
+      console.log("other");
+      break;
+    }
+  }
+  console.log("next cell location: " + JSON.stringify(pac_new_loc));
+  return pac_new_loc;
+}
+
