@@ -14,16 +14,6 @@ case object FullGame extends PacManMessage
 class PacManActor extends Actor with ActorLogging {
 
   val board = readBoard()
-  /*
-  val borderTemplates: Map[String, List[List[Int]]] = Map(
-    "v" -> List(List(1, 0), List(1, 1), List(1, 2)),
-    "h" -> List(List(0, 1), List(1, 1), List(2, 1)),
-    "tl" -> List(List(1, 1), List(1, 2), List(2, 1)),
-    "tr" -> List(List(0, 1), List(1, 1), List(1, 2)),
-    "br" -> List(List(1, 0), List(0, 1), List(1, 1)),
-    "bl" -> List(List(1, 0), List(1, 1), List(2, 1))
-  )
-  */
 
   override def receive: Actor.Receive = initial(makeBoardMap(readBoard()))
 
@@ -45,8 +35,7 @@ class PacManActor extends Actor with ActorLogging {
       }
   }
 
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////// HELPERS ///////////////////////////////////////////////////////
   private def readBoard(): Array[Array[Int]] = {
     val source = fromFile("assets/board.txt")
     val lines = source.getLines()

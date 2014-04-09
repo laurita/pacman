@@ -52,8 +52,10 @@ $(document).ready( function() {
       console.log(ev.data);
       var json = jQuery.parseJSON(ev.data);
       console.log(json);
-      boardA = json.boardA;
-      board = makeBoard(conf.borderTemplates);
+      boardA = json.board;
+      console.log("boardA")
+      console.log(boardA)
+      board = makeBoard(boardA, conf.borderTemplates);
       state = {
                 score: 0,
                 gameState: 0, // 0 - before start, 1 - in game, 2 - game over

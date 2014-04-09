@@ -102,7 +102,7 @@ function drawFoods(foods, conf, ctx) {
   }
   ctx.restore();
 }
-
+/*
 function boardArray() {
   return [
           [3,2,2,2,2,2,2,2,2,2,2,2,2,4,3,2,2,2,2,2,2,2,2,2,2,2,2,4],
@@ -138,9 +138,8 @@ function boardArray() {
           [5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6]  
          ];
 }
-
-function makeBoard(templates) {
-  var ba = boardArray();
+*/
+function makeBoard(ba, templates) {
   var borders = [];
   var pills = [];
   var foods = [];
