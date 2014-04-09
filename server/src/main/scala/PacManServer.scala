@@ -9,6 +9,9 @@ object PacManServer extends Logger {
   // create actor system
   val system = ActorSystem("PacManActorSystem")
 
+  // create PacManActor
+  system.actorOf(Props[PacManActor], name="PacManActor")
+
   // create routes
   val routes = Routes({
 
@@ -39,7 +42,7 @@ object PacManServer extends Logger {
     }
 
     case WebSocketFrame(wsFrame) =>
-      log.info("frame")
+      log.info(s"got frame $wsFrame")
       val webSocketId = wsFrame.webSocketId
       val wsrh = system.actorSelection(s"user/socketRequestHandler$webSocketId")
       wsrh ! wsFrame
@@ -57,12 +60,12 @@ object PacManServer extends Logger {
   }
 
   def onWebSocketHandshakeComplete(webSocketId: String) {
-    // create WebSocketRequestHandler and open TCP socket
+    // create WebSocketRequestHandler
     system.actorOf(Props(new WebSocketRequestHandler(webSocketId)), name=s"socketRequestHandler$webSocketId")
   }
 
   def onWebSocketClose(webSocketId: String) {
-    system.actorSelection(s"user/$webSocketId") ! PoisonPill
+    system.actorSelection(s"user/socketRequestHandler$webSocketId") ! PoisonPill
     println(s"Web socket $webSocketId closed")
   }
 }

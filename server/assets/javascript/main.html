@@ -27,16 +27,9 @@ $(document).ready( function() {
   var conf = { resolution: { x: 504, y: 558, fx: 28, fy: 31 },
                borderTemplates: borderTemplates()
              };
-            
-  var boardA = boardArray(); 
-  var board = makeBoard(conf.borderTemplates);
-  var state = {
-                score: 0,
-                gameState: 0, // 0 - before start, 1 - in game, 2 - game over
-                maze: new maze( board ),
-                board: boardA
-              };
-
+  var boardA;
+  var board;
+  var state;
   
   // access the dom
   var canvas = $('canvas')[0];
@@ -44,8 +37,7 @@ $(document).ready( function() {
   canvas.height = conf.resolution.y;
   var ctx = canvas.getContext('2d');
   
-  // set up events
-  state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
+
 
   // react to socket data
   if (!window.WebSocket) {
@@ -56,12 +48,26 @@ $(document).ready( function() {
   if (window.WebSocket) {
     socket = new WebSocket("ws://localhost:8888/websocket/");
 
-    socket.onmessage = function(event) {
-      handleSocketNotLogged(event);
+    socket.onmessage = function(ev) {
+      console.log(ev.data);
+      var json = jQuery.parseJSON(ev.data);
+      console.log(json);
+      boardA = json.boardA;
+      board = makeBoard(conf.borderTemplates);
+      state = {
+                score: 0,
+                gameState: 0, // 0 - before start, 1 - in game, 2 - game over
+                maze: new maze( board ),
+                board: boardA
+              };
+      // set up events
+      state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
+
     }
 
-    socket.onopen = function(event) {
-      $('#responseText').val("Web Socket opened!");
+    socket.onopen = function(ev) {
+      console.log("Web Socket opened!");
+      socket.send(JSON.stringify({ 'event' : 'start' }));
     };
 
     socket.onclose = function(event) {
@@ -75,9 +81,6 @@ $(document).ready( function() {
   
   $(document).keydown( function(ev) {
     console.log(ev.keyCode);
-    // check what's in next cell
-    //socket.emit('event', { keycode : ev.keyCode });
-    // TODO: send to server
     if (!window.WebSocket) { return; }
     if (socket.readyState == WebSocket.OPEN) {
       socket.send(JSON.stringify({ keycode : ev.keyCode }));
