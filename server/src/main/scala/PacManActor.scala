@@ -1,7 +1,7 @@
 import akka.actor.{Actor, ActorLogging}
 import items._
 import scala.io.Source._
-import scala.util.parsing.json.{JSONArray, JSONObject}
+import scala.util.parsing.json.{JSON, JSONArray, JSONObject}
 import scala.{Option, Tuple3}
 
 sealed trait PacManMessage
@@ -20,7 +20,6 @@ class PacManActor extends Actor with ActorLogging {
   def initial(state: Map[String, Any]): Receive = {
     case GetPlayer =>
       log.info(s"got GetPlayer")
-      // TODO:
       val pl = getPlayer(state)
       pl match {
         case None =>
@@ -33,6 +32,16 @@ class PacManActor extends Actor with ActorLogging {
           context.become(initial(newState))
           sender ! State(jsonState)
       }
+
+    case Move(k, p) =>
+      log.info(s"got Move($k, $p)")
+      val pl = state.get("players").get.asInstanceOf[List[Player]].find(x => x.id == p).get
+      val newLoc = getNextCellLocation(pl, state.get("board").get.asInstanceOf[Array[Array[Int]]], k)
+      // get what is in next cell
+      // perform event
+      // TODO
+      context.become(initial(performEvent(p, newLoc, state)))
+
   }
 
   ////////////////////////////////////////////////////// HELPERS ///////////////////////////////////////////////////////
@@ -87,7 +96,7 @@ class PacManActor extends Actor with ActorLogging {
           // ghosts
           // TODO: change color to type/name
           else if (elem >= 9 && elem <= 12) {
-            var color = elem match {
+            val color = elem match {
               case 9 => "#d00"
               case 10 => "#6ff"
               case 11 => "#f99"
@@ -103,7 +112,7 @@ class PacManActor extends Actor with ActorLogging {
   }
 
 
-  def getPlayer(state: Map[String, Any]): Option[Player] = {
+  private def getPlayer(state: Map[String, Any]): Option[Player] = {
     val players = state.get("players").get.asInstanceOf[List[Player]]
 
     def rec(ghosts: List[Ghost]): Option[Player] = {
@@ -121,6 +130,41 @@ class PacManActor extends Actor with ActorLogging {
     } else if (players.length < 5) {
       rec(state.get("ghosts").asInstanceOf[List[Ghost]])
     } else None
+  }
+
+  private def getNextCellLocation(player: Player, board: Array[Array[Int]], keycode: Int): Map[Char, Int] = {
+    val loc = player.loc
+    val newLoc = keycode match {
+      // left
+      case 37 =>
+        log.info("left")
+        Map( 'x' -> (loc.get('x').get - 1), 'y' -> loc.get('y').get)
+
+      // up
+      case 38 =>
+        log.info("up")
+        Map( 'x' -> loc.get('x').get, 'y' -> (loc.get('y').get - 1) )
+
+      // right
+      case 39 =>
+        log.info("right")
+        Map( 'x' -> (loc.get('x').get + 1), 'y' -> loc.get('y').get )
+
+      // down
+      case 40 =>
+        log.info("down")
+        Map( 'x' -> loc.get('x').get, 'y' -> (loc.get('y').get + 1) )
+      case _ =>
+        log.info("other")
+    }
+    log.info("next cell location for : " + newLoc)
+    newLoc.asInstanceOf[Map[Char, Int]]
+  }
+
+  private def performEvent(player: Int, newLoc: Map[Char, Int], state: Map[String, Any]): Map[String, Any] = {
+    val board = state.get("board").get.asInstanceOf[Array[Array[Int]]]
+    ???
+    // TODO
   }
 }
 

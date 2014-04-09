@@ -60,7 +60,8 @@ $(document).ready( function() {
                 score: 0,
                 gameState: 0, // 0 - before start, 1 - in game, 2 - game over
                 maze: new maze( board ),
-                board: boardA
+                board: boardA,
+                player: json.player
               };
       // set up events
       state.drawId = setInterval( function() { draw(conf, state, ctx); } , 1000 / 60 );
@@ -85,7 +86,7 @@ $(document).ready( function() {
     console.log(ev.keyCode);
     if (!window.WebSocket) { return; }
     if (socket.readyState == WebSocket.OPEN) {
-      socket.send(JSON.stringify({ keycode : ev.keyCode }));
+      socket.send(JSON.stringify({ event: 'move', keycode : ev.keyCode }));
     } else {
       alert("The socket is not open.");
     }

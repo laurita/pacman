@@ -5,7 +5,7 @@ import scala.util.parsing.json.{JSONObject, JSON}
 class WebSocketRequestHandler(webSocketId: String) extends Actor with ActorLogging {
   override def receive: Actor.Receive = {
     case frameEvent: WebSocketFrameEvent =>
-      log.info(s"got $frameEvent in loggedIn mode")
+      log.info(s"got $frameEvent")
       // parse JSON from data sent
       val json = JSON.parseFull(frameEvent.readText()).get.asInstanceOf[Map[String,Any]]
       if (json.contains("event")) {
@@ -15,11 +15,6 @@ class WebSocketRequestHandler(webSocketId: String) extends Actor with ActorLoggi
             log.info(s"got start")
             context.system.actorSelection(s"user/PacManActor") ! GetPlayer
             context.become(waitForPlayer)
-          case "move" =>
-            log.info(s"got move")
-            //get keycode
-            val keycode = json.get("keycode")
-            // TODO: send play move to PacManActor
           case e =>
             log.info(s"unknown event $e")
         }
@@ -46,8 +41,30 @@ class WebSocketRequestHandler(webSocketId: String) extends Actor with ActorLoggi
       log.info(s"got State($state) in waitForPlayer state")
       val text = new JSONObject(state + ("player" -> playerId)).toString()
       PacManServer.webServer.webSocketConnections.writeText(text, webSocketId)
+      context.become(waitForEvents(playerId))
     case m =>
       log.info(s"got unknown message $m in waitForState state")
+  }
+
+  def waitForEvents(playerId: Int): Receive = {
+    case frameEvent: WebSocketFrameEvent =>
+      log.info(s"got $frameEvent in waitForEvents state")
+      // parse JSON from data sent
+      val json = JSON.parseFull(frameEvent.readText()).get.asInstanceOf[Map[String,Any]]
+      if (json.contains("event")) {
+        log.info("json contains event")
+        json.get("event").get match {
+          case "move" =>
+            log.info(s"got move")
+            //get keycode
+            val keycode = json.get("keycode").get.asInstanceOf[Int]
+            context.system.actorSelection(s"user/PacManActor") ! Move(keycode, playerId)
+          case e =>
+            log.info(s"unknown event $e")
+        }
+      } else {
+        log.info("json does not contain event")
+      }
   }
 
   ///////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@ package items
 
 sealed trait Player {
   def id: Int
+  def loc: Map[Char, Int]
 }
 
 
