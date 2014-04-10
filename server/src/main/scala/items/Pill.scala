@@ -1,5 +1,6 @@
 package items
 
-class Pill(loc: Map[Char, Int]) {
+class Pill(l: List[Int]) {
+  val loc = l
 
 }

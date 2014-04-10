@@ -1,5 +1,5 @@
 package items
 
-class Border(loc: Map[Char, Int], temp: Int) {
+class Border(loc: List[Int], temp: Int) {
 
 }

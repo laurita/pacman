@@ -16,7 +16,7 @@ class WebSocketRequestHandler(webSocketId: String) extends Actor with ActorLoggi
             context.system.actorSelection(s"user/PacManActor") ! GetPlayer
             context.become(waitForPlayer)
           case e =>
-            log.info(s"unknown event $e")
+            log.info(s"unknown event $e in receive state")
         }
       } else {
         log.info("json does not contain event")
@@ -38,7 +38,7 @@ class WebSocketRequestHandler(webSocketId: String) extends Actor with ActorLoggi
 
   def waitForState(playerId: Int): Receive = {
     case State(state) =>
-      log.info(s"got State($state) in waitForPlayer state")
+      log.info(s"got State($state) in waitForState state")
       val text = new JSONObject(state + ("player" -> playerId)).toString()
       PacManServer.webServer.webSocketConnections.writeText(text, webSocketId)
       context.become(waitForEvents(playerId))
@@ -57,14 +57,19 @@ class WebSocketRequestHandler(webSocketId: String) extends Actor with ActorLoggi
           case "move" =>
             log.info(s"got move")
             //get keycode
-            val keycode = json.get("keycode").get.asInstanceOf[Int]
+            val keycode = json.get("keycode").get.asInstanceOf[Double].toInt
             context.system.actorSelection(s"user/PacManActor") ! Move(keycode, playerId)
           case e =>
-            log.info(s"unknown event $e")
+            log.info(s"unknown event $e in waiForEvents state")
         }
       } else {
         log.info("json does not contain event")
       }
+    case State(state) =>
+      log.info(s"got State($state) in waitForEvents state")
+      val text = new JSONObject(state + ("player" -> playerId)).toString()
+      PacManServer.webServer.webSocketConnections.writeText(text, webSocketId)
+      context.become(waitForEvents(playerId))
   }
 
   ///////////////////////////////////////////////////////////////////////

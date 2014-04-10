@@ -1,5 +1,5 @@
 package items
 
-class Food(loc: Map[Char, Int]) {
-
+class Food(l: List[Int]) {
+  val loc = l
 }
